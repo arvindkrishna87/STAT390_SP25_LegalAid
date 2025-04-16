@@ -1,0 +1,120 @@
+---
+title: "LMSR_Initial_Exploration"
+author: "Mia Houseworth"
+
+format:
+  html:
+    toc: true
+    embed-resources: true
+    code-fold: show
+    link-external-newwindow: true
+    
+execute:
+  warning: false
+
+from: markdown+emoji 
+---
+
+## Initial Data Exploration
+
+```{r}
+#load packages 
+
+library(tidyverse)
+library(readr)
+library(skimr)
+library(ggplot2)
+library(kableExtra)
+library(readxl)
+```
+
+### Data Cleaning 
+
+```{r}
+#upload the month files
+file_list <- list.files(
+  path = ".", 
+  pattern = "^(January|February|March|April|May|June|July|August|September|October|November|December)\\s\\d{4}\\.xlsx$",
+  full.names = TRUE
+)
+
+
+#read the excel, clean the names, fill st there aren't any spaces
+read_and_clean <- function(file_path) {
+  read_excel(file_path, skip = 2) %>%
+    janitor::clean_names() %>%
+    fill(legal_menu_option, menu_selection, queue_selection, group_suboption, .direction = "down") %>%
+    mutate(month = tools::file_path_sans_ext(basename(file_path)))  #add month name for reference
+}
+
+all_months_cleaned <- map_dfr(file_list, read_and_clean)
+
+#write the csv so it can be uploaded
+write_csv(all_months_cleaned, "correct_LMSR_combined.csv")
+```
+
+## Exploration
+
+```{r}
+df <- read_csv("correct_LMSR_combined.csv")
+```
+
+### Data Exploration
+
+```{r}
+skim_without_charts(df)
+```
+
+#### **Number of rows and columns**
+
+-   There are 2349 rows and 11 columns
+
+#### **Distribution of each continuous variable (quantiles), frequency of each category of each categorical variable, and number of missing values of each variable**
+
+```{r}
+#count for each month
+df %>% 
+  count(month) %>% 
+  kable()
+```
+
+```{r}
+# Convert numeric columns from character to numeric (if needed)
+df <- df %>%
+  mutate(across(c(total_calls, live_queued_calls, callback_queued_calls,
+                  closed_queue_calls, abandoned_calls), as.numeric))
+```
+
+```{r}
+# Quantile Summary of Continuous Variables
+df %>%
+  select(total_calls, live_queued_calls, callback_queued_calls,
+         closed_queue_calls, abandoned_calls) %>%
+  summary() %>% 
+  kable()
+```
+
+```{r}
+# Create frequency summary for categorical variables
+categorical_summary <- df %>%
+  select(where(is.character)) %>%
+  map_df(~{
+    tibble(
+      top_5_values = paste(names(sort(table(.), decreasing = TRUE))[1:5], collapse = ", "),
+      total_unique = n_distinct(.), #include the unique
+      num_missing = sum(is.na(.)) #include na
+    )
+  }, .id = "variable") %>% 
+  kable() #make the table look nice
+
+print(categorical_summary)
+
+```
+
+```{r}
+#missingness
+df %>%
+  summarise(across(everything(), ~sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "variable", values_to = "missing_count")
+
+```
