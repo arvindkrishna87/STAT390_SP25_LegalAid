@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.251">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>cardata_eda</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="CARdata_eda_files/libs/clipboard/clipboard.min.js"></script>
+<script src="CARdata_eda_files/libs/quarto-html/quarto.js"></script>
+<script src="CARdata_eda_files/libs/quarto-html/popper.min.js"></script>
+<script src="CARdata_eda_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="CARdata_eda_files/libs/quarto-html/anchor.min.js"></script>
+<link href="CARdata_eda_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="CARdata_eda_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="CARdata_eda_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="CARdata_eda_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="CARdata_eda_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="call-journey-data-eda" class="level1">
+<h1>Call Journey Data EDA</h1>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>cd Downloads<span class="op">/</span>CARdata</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[Errno 2] No such file or directory: 'Downloads/CARdata'
+/Users/lilaweiner/Downloads/CARdata</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reading in data</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>jan25_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (01-12-25 - 01-18-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>jan25_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (01-19-25 - 02-01-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>feb25_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (02-02-25 - 02-15-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>feb25_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (02-16-25 - 03-01-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>mar25_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (03-02-25 - 03-15-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>apr24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (04-07-24 - 04-20-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>apr24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (04-21-24 - 05-04-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>may24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (05-05-24 - 05-18-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>may24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (05-19-24 - 06-01-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>jun24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (06-02-24 - 06-15-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>jun24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (06-16-24 - 06-29-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>jul24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (06-30-24 - 07-13-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>jul24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (07-14-24 - 07-27-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>aug24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (07-28-24 - 08-10-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>aug24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (08-11-24 - 08-24-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>sep24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (08-24-24 - 09-07-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>sep24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (09-08-24 - 09-21-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>oct24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (09-22-24 - 10-05-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>oct24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (10-06-24 - 10-19-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>nov24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (10-20-24 - 11-02-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>nov24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (11-03-24 - 11-16-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>nov24_3 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (11-17-24 - 11-30-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>dec24_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (12-01-24 - 12-14-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>dec24_2 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (12-15-24 - 12-28-24).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>dec24_3 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (12-29-24 - 01-11-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")
+/Users/lilaweiner/opt/anaconda3/lib/python3.9/site-packages/openpyxl/styles/stylesheet.py:226: UserWarning: Workbook contains no default style, apply openpyxl's default
+  warn("Workbook contains no default style, apply openpyxl's default")</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="117">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>jan25_1 <span class="op">=</span> pd.read_excel(<span class="st">'CAR - EP, Flow, Activity, Queue, &amp; Agent Names (01-12-25 - 01-18-25).xlsx'</span>, dtype<span class="op">=</span><span class="bu">str</span>, keep_default_na<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>jan25_1.head(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="117">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Time Zone: (UTC-05:00) Central Daylight Time (America/Chicago)</th>
+      <th>Unnamed: 1</th>
+      <th>Unnamed: 2</th>
+      <th>Unnamed: 3</th>
+      <th>Unnamed: 4</th>
+      <th>Unnamed: 5</th>
+      <th>Unnamed: 6</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Contact Session ID</td>
+      <td>EP Name</td>
+      <td>Flow Name</td>
+      <td>Activity Name</td>
+      <td>Activity Start Timestamp</td>
+      <td>Queue Name</td>
+      <td>Agent Name</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>N/A</td>
+      <td>LACMain</td>
+      <td>N/A</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>N/A</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>N/A</td>
+      <td>2025/01/12 12:36:39 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>N/A</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>N/A</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>N/A</td>
+      <td>N/A</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>41d0572a-fe08-49e3-80e4-396078bc3b36</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>N/A</td>
+      <td>2025/01/12 02:38:18 AM</td>
+      <td>SubSenior Homeowner SP</td>
+      <td>N/A</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="64">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaning function</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean(df):</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    df.columns <span class="op">=</span> df.iloc[<span class="dv">1</span>]</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    new <span class="op">=</span> df.iloc[<span class="dv">2</span>:].reset_index(drop <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    new.replace(<span class="st">'N/A'</span>, pd.NA, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    new.fillna(method<span class="op">=</span><span class="st">'ffill'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> new</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="67">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cleaning dfs</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>xjan25_1 <span class="op">=</span> clean(jan25_1)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>xjan25_2 <span class="op">=</span> clean(jan25_2)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>xfeb25_1 <span class="op">=</span> clean(feb25_1)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>xfeb25_2 <span class="op">=</span> clean(feb25_2)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>xmar25_1 <span class="op">=</span> clean(mar25_1)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>xapr24_1 <span class="op">=</span> clean(apr24_1)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>xapr24_2 <span class="op">=</span> clean(apr24_2)</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>xmay24_1 <span class="op">=</span> clean(may24_1)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>xmay24_2 <span class="op">=</span> clean(may24_2)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>xjun24_1 <span class="op">=</span> clean(jun24_1)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>xjun24_2 <span class="op">=</span> clean(jun24_2)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>xjul24_1 <span class="op">=</span> clean(jul24_1)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>xjul24_2 <span class="op">=</span> clean(jul24_2)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>xaug24_1 <span class="op">=</span> clean(aug24_1)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>xaug24_2 <span class="op">=</span> clean(aug24_2)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>xsep24_1 <span class="op">=</span> clean(sep24_1)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>xsep24_2 <span class="op">=</span> clean(sep24_2)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>xoct24_1 <span class="op">=</span> clean(oct24_1)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>xoct24_2 <span class="op">=</span> clean(oct24_2)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>xnov24_1 <span class="op">=</span> clean(nov24_1)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>xnov24_2 <span class="op">=</span> clean(nov24_2)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>xnov24_3 <span class="op">=</span> clean(nov24_3)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>xdec24_1 <span class="op">=</span> clean(dec24_1)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>xdec24_2 <span class="op">=</span> clean(dec24_2)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>xdec24_3 <span class="op">=</span> clean(dec24_3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="143">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list of cleaned dfs</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>all_data <span class="op">=</span> [xjan25_1 ,xjan25_2 ,xfeb25_1 ,xfeb25_2 ,xmar25_1 ,xapr24_1 ,xapr24_2 ,xmay24_1 ,xmay24_2 ,xjun24_1 ,xjun24_2 </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>,xjul24_1, xjul24_2 ,xaug24_1 ,xaug24_2 ,xsep24_1 ,xsep24_2 ,xoct24_1 ,xoct24_2 ,xnov24_1 ,xnov24_2 </span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>,xnov24_3 ,xdec24_1 ,xdec24_2 ,xdec24_3 ]</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(all_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="143">
+<pre><code>25</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="70">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># concatenating the list of clean dfs </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>combined <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>xjan25_1.columns)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> dataset <span class="kw">in</span> all_data:</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    combined <span class="op">=</span> pd.concat([combined, dataset[:<span class="bu">len</span>(dataset) <span class="op">-</span> <span class="dv">1</span>]], axis <span class="op">=</span> <span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="combined-data-eda" class="level1">
+<h1>Combined Data EDA</h1>
+<div class="cell" data-execution_count="128">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>combined.to_csv(<span class="st">'combined.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="76">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>combined.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="76">
+<pre><code>(2075533, 7)</code></pre>
+</div>
+</div>
+<ul>
+<li>2,075,533 rows</li>
+<li>7 columns</li>
+</ul>
+<div class="cell" data-execution_count="78">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>combined.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="78">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>1</th>
+      <th>Contact Session ID</th>
+      <th>EP Name</th>
+      <th>Flow Name</th>
+      <th>Activity Name</th>
+      <th>Activity Start Timestamp</th>
+      <th>Queue Name</th>
+      <th>Agent Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:39 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="105">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(combined[<span class="st">'Agent Name'</span>].isna().value_counts())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="105">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Agent Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>False</th>
+      <td>2071938</td>
+    </tr>
+    <tr>
+      <th>True</th>
+      <td>3595</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="148">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>combined[<span class="st">'Flow Name'</span>].value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="148">
+<pre><code>LACMain                    852086
+LegalMenu                  304663
+PreLegalMenuSeniorsMenu    267979
+ClosedQueueMenu            156145
+ClosedHoursHolidaysMenu     81438
+Queues                      76408
+LegalFamilyMenu             65806
+LegalHousingMenu            55265
+Intake_Outdial              49966
+OtherLegalMenu              46803
+FarmworkerMain              38778
+CourtesyCallback            32425
+LegalBenefitsMenu           19396
+LegalImmigrationMenu        10690
+LegalEmploymentMenu         10523
+LegalHIVMenu                 7101
+Name: Flow Name, dtype: int64</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="131">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#examining all of the rows for one particular contact session ID </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>combined.loc[combined[<span class="st">'Contact Session ID'</span>] <span class="op">==</span> <span class="st">'1cecb817-00fa-433a-9ec5-4bc306b42a78'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="131">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>1</th>
+      <th>Contact Session ID</th>
+      <th>EP Name</th>
+      <th>Flow Name</th>
+      <th>Activity Name</th>
+      <th>Activity Start Timestamp</th>
+      <th>Queue Name</th>
+      <th>Agent Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:39 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="132">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>combined.drop_duplicates()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="132">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>1</th>
+      <th>Contact Session ID</th>
+      <th>EP Name</th>
+      <th>Flow Name</th>
+      <th>Activity Name</th>
+      <th>Activity Start Timestamp</th>
+      <th>Queue Name</th>
+      <th>Agent Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>&lt;NA&gt;</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:38 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:39 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1cecb817-00fa-433a-9ec5-4bc306b42a78</td>
+      <td>Main Number Telephony EP</td>
+      <td>LACMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/12 12:36:40 AM</td>
+      <td>&lt;NA&gt;</td>
+      <td>&lt;NA&gt;</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>75350</th>
+      <td>62802fa3-1cac-4b1f-8e88-b83df182966f</td>
+      <td>Farmworker Main Number Telephony EP</td>
+      <td>FarmworkerMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/11 09:28:05 PM</td>
+      <td>Clinic Voicemail Transfer</td>
+      <td>CBT Agent</td>
+    </tr>
+    <tr>
+      <th>75351</th>
+      <td>62802fa3-1cac-4b1f-8e88-b83df182966f</td>
+      <td>Farmworker Main Number Telephony EP</td>
+      <td>FarmworkerMain</td>
+      <td>LanguageSelectionMenu</td>
+      <td>2025/01/11 09:28:06 PM</td>
+      <td>Clinic Voicemail Transfer</td>
+      <td>CBT Agent</td>
+    </tr>
+    <tr>
+      <th>75352</th>
+      <td>62802fa3-1cac-4b1f-8e88-b83df182966f</td>
+      <td>Farmworker Main Number Telephony EP</td>
+      <td>FarmworkerMain</td>
+      <td>FarmworkerMainMenu</td>
+      <td>2025/01/11 09:28:13 PM</td>
+      <td>Clinic Voicemail Transfer</td>
+      <td>CBT Agent</td>
+    </tr>
+    <tr>
+      <th>75353</th>
+      <td>2b7f0db4-1952-4162-be51-78c663845ae7</td>
+      <td>Farmworker Main Number Telephony EP</td>
+      <td>FarmworkerMain</td>
+      <td>FarmworkerMainMenu</td>
+      <td>2025/01/11 09:44:15 PM</td>
+      <td>Clinic Voicemail Transfer</td>
+      <td>CBT Agent</td>
+    </tr>
+    <tr>
+      <th>75354</th>
+      <td>62802fa3-1cac-4b1f-8e88-b83df182966f</td>
+      <td>Farmworker Main Number Telephony EP</td>
+      <td>FarmworkerMain</td>
+      <td>FarmworkerMainMenu</td>
+      <td>2025/01/11 09:57:46 PM</td>
+      <td>Clinic Voicemail Transfer</td>
+      <td>CBT Agent</td>
+    </tr>
+  </tbody>
+</table>
+<p>1695789 rows × 7 columns</p>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="149">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span>  combined.columns:</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(combined[col].value_counts().head(<span class="dv">5</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"-"</span> <span class="op">*</span>  <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>6659c928-9a49-4ee5-8747-fd073135dd39    262
+58d3c502-dfe6-441a-8790-fe1179cf7e3c    247
+237cced8-b1ad-466f-92af-ded76276204f    247
+baee60bb-1af1-4973-875f-4bf51830aceb    227
+de76b0cc-bb1c-4612-bc44-29ab7586e81e    202
+Name: Contact Session ID, dtype: int64
+--------------------------------------------------
+Main Number Telephony EP                    1055649
+Legal Menu Telephony EP                      193936
+Pre-Legal Menu Seniors Menu Telephony EP     192697
+Closed Queue Menu Telephony EP               134201
+All LAC Queues Telephony EP                   93309
+Name: EP Name, dtype: int64
+--------------------------------------------------
+LACMain                    852086
+LegalMenu                  304663
+PreLegalMenuSeniorsMenu    267979
+ClosedQueueMenu            156145
+ClosedHoursHolidaysMenu     81438
+Name: Flow Name, dtype: int64
+--------------------------------------------------
+LanguageSelectionMenu    448992
+MainMenu                 223672
+SeniorsMenu              142808
+LegalMenu2               135498
+ClosedQueueMenu          125354
+Name: Activity Name, dtype: int64
+--------------------------------------------------
+2025/01/22 08:04:24 AM    16
+2024/08/13 08:02:59 AM    14
+2025/01/08 02:49:44 PM    13
+2025/02/24 10:23:04 AM    13
+2025/03/12 01:40:52 PM    13
+Name: Activity Start Timestamp, dtype: int64
+--------------------------------------------------
+Clinic Voicemail Transfer           506868
+Staff Directory English Transfer    484497
+Front Desk Transfer                 309980
+Intake Outdial Queue                199974
+Staff Directory Spanish Transfer     80170
+Name: Queue Name, dtype: int64
+--------------------------------------------------
+CBT Agent             1604702
+Ana Franco              77809
+Monica Grubbs           75109
+Marisol Guadarrama      67509
+Flora Fell              61062
+Name: Agent Name, dtype: int64
+--------------------------------------------------</code></pre>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
