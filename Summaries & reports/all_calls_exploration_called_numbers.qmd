@@ -1,0 +1,121 @@
+---
+title: "All Calls Exploration of Called Numbers"
+subtitle: "Stat 390 Project with Legal Aid Chicago"
+author: "Maia Sporn"
+format: html
+---
+
+```{r}
+#| code-fold: true
+#| warning: false
+# load packages and data
+library(tidyverse)
+all_calls <- read_csv("all_calls.csv") # this is a cleaned csv
+```
+
+Getting some basic summary stats and exploring the issue:
+
+- 344,464 total calls, of these 123,716 have multiple called numbers (36%)
+
+```{r}
+#| results: hide
+# understand the issue - how many correlation IDs have multiple called numbers
+all_calls %>% distinct(correlation_id) %>% nrow() # 344464 total calls
+
+df <- all_calls %>%
+  group_by(correlation_id) %>%
+  summarize(n_unique_numbers = n_distinct(called_number)) %>%
+  filter(n_unique_numbers > 1)
+df %>% nrow() # 123716 calls have multiple called numbers (36% of total calls)
+```
+
+Exploring hypothesis #1: Transfers
+
+- 57,435 calls with multiple numbers appear to be transfers
+  
+    - Call transfer time seems to be the key indicator (transfer related call ID is also present for some calls, but always attached to a non-NA call transfer time if present)
+    
+- Also, 203 calls with only one number are transfers (though this is only a small percentage, 0.9%)
+
+**It doesn't seem like transfers are the sole explanation behind why some calls have multiple called numbers**
+
+```{r}
+#| results: hide
+# examine relevant variables for calls with multiple numbers
+df_leg_info <- all_calls %>%
+  group_by(correlation_id) %>%
+  filter(n_distinct(called_number) > 1) %>%
+  arrange(correlation_id, start_time) %>%
+  select(correlation_id, called_number, call_transfer_time, transfer_related_call_id,
+         original_reason, related_reason, redirect_reason, related_call_id)
+df_leg_info
+
+# compare with calls with one called number
+df_one_number <- all_calls %>%
+  group_by(correlation_id) %>%
+  filter(n_distinct(called_number) == 1) %>%
+  arrange(correlation_id, start_time) %>%
+  select(correlation_id, direction, called_number, call_transfer_time, releasing_party, 
+         original_reason, redirect_reason, related_reason, related_call_id)
+df_one_number
+
+df_one_number %>% filter(!is.na(call_transfer_time))
+
+transfer <- df_leg_info %>% filter(!is.na(transfer_related_call_id)) %>%
+  select(transfer_related_call_id, correlation_id, called_number, call_transfer_time, 
+         original_reason, related_reason, redirect_reason, related_call_id)
+
+calls_with_transfer_id <- unique(transfer$correlation_id)
+# 20,151 calls with multiple numbers are attached to a non-NA transfer ID
+# but not all call legs with a call transfer time have a transfer ID
+
+call_transfer_time <- df_leg_info %>% filter(!is.na(call_transfer_time)) %>%
+  select(transfer_related_call_id, correlation_id, called_number, call_transfer_time,
+         original_reason, related_reason, redirect_reason, related_call_id)
+
+calls_with_call_transfer_time <- unique(call_transfer_time$correlation_id)
+# 57,435 calls with multiple numbers are attached to a non-NA call transfer time
+
+calls_transfers <- append(calls_with_transfer_id, calls_with_call_transfer_time)
+unique(calls_transfers)
+# 57,435 calls have call transfer time and/or transfer ID --> 57,435 calls are transfers
+# can't be the sole explanation for the 123,716 calls have multiple called numbers 
+
+# find how many calls with one number are transfers
+one_number_transfer <- df_one_number %>% filter(!is.na(call_transfer_time))
+one_number_calls_with_transfer_id <- unique(one_number_transfer$correlation_id)
+# 203 calls with one number are transfers (0.09%)
+```
+
+```{r}
+# show example of what a transferred call looks like
+call_transfer_time %>%
+  filter(correlation_id == "9463a568-c2c6-4c11-a536-c87a0fe7a220") %>%
+  select(correlation_id, called_number, transfer_related_call_id, call_transfer_time) %>% knitr::kable()
+```
+
+Exploring hypothesis #2: Redirection & call routing
+
+- 112,775 calls with multiple numbers have an original/related/redirected reason (again not all 123,716)
+
+- 1728 out of 220,748 calls with only one number have at least one of these routing reasons
+
+**This again suggest redirection & routing is not the source of the multiple-number issue**
+
+```{r}
+#| results: hide
+# explore redirection / call routing
+calls_with_reason <- df_leg_info %>% 
+  filter(!is.na(original_reason) | !is.na(related_reason) | !is.na(redirect_reason))
+unique(calls_with_reason$correlation_id)
+# 112,775 calls have an original/related/redirect reason
+# but again not all 123,716
+
+unique(df_one_number$correlation_id)
+# 220,748 calls have only one number
+# also 1728 of the 220,748 calls with only one number have at least one of these reasons (0.7%)
+one_number_calls_with_reason <- df_one_number %>% filter(!is.na(original_reason) | !is.na(related_reason) | !is.na(redirect_reason))
+unique(one_number_calls_with_reason$correlation_id)
+
+```
+
