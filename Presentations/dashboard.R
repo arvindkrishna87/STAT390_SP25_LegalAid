@@ -111,11 +111,10 @@ role_df <- role_df %>%
       "8:00 PM - 8:59 PM", "9:00 PM - 9:59 PM", "10:00 PM - 10:59 PM", "11:00 PM - 11:59 PM"
     )),
     business_hours = ifelse(hour %in% c(8,9,10,11,12,13,14,15,16), "During Business Hours", "Outside Business Hours"),
-    month = factor(month, levels = c("April 2024", "May 2024", "June 2024", "July 2024", "August 2024", "September 2024", "October 2024", "November 2024", "December 2024", "January 2025", "February 2025", "March 2025"))
+    month = factor(month, levels = c("April 2024", "May 2024", "June 2024", "July 2024", "August 2024", "September 2024", "October 2024", "November 2024", "December 2024", "January 2025", "February 2025", "March 2025")),
+    day_of_week = weekdays(start_time),
+    weekend = ifelse(day_of_week %in% c("Sunday","Saturday"), "Weekend", "Weekday")
   )
 
 # output df for tableau ----
 write.csv(role_df, "call_roles_by_number.csv", row.names = FALSE)
-
-
-
