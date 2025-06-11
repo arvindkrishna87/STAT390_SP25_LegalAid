@@ -36,34 +36,6 @@ combined_data <- combined_data %>%
 #save the csv-----------------
 write.csv(combined_data, file = "~/Desktop/stat 390/Call journey data/combined_call_data.csv", row.names = FALSE)
 
-#count distinct for num contact session IDs for each activity name
-combined_data %>%
-  group_by(`Activity Name`) %>%
-  summarise(contact_session_count = n_distinct(`Contact Session ID`)) %>%
-  arrange(desc(contact_session_count)) 
-
-
-weekend_activities <- combined_data %>%
-  filter(Weekend_Weekday == "Weekend") %>%
-  select(`Activity Name`) %>%   # Or use the appropriate activity column
-  distinct()
-
-#count distinct
-table <- combined_data %>%
-  filter(`Activity Name` == "FamilyMenu") %>%
-  group_by(`Queue Name`) %>%
-  summarise(
-    Distinct_Contact_Sessions = n_distinct(`Contact Session ID`)
-  ) %>%
-  arrange(desc(Distinct_Contact_Sessions))
-
-print(table)
-
-
-combined_data %>% 
-  filter(`Activity Name` == "FamilyMenu") %>%
-  summarise(Total_Contact_Sessions = n_distinct(`Contact Session ID`))
-
 
 
 
